@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<title>cashStats.html</title>
+<style>
+	.hint {color: gray}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<a class="navbar-brand">CashBook</a>
+		<ul class="nav nav-tabs">
+		  <li class="nav-item">
+		    <a class="nav-link" href="http://localhost/admin/index">index</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" href="http://localhost/admin/cashbookByMonth/now/-1/-1">cashbook</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" href="http://localhost/admin/logout">logout</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" href="http://localhost:8080/cashStats.html">cashStats</a>
+		  </li>
+		</ul>
+	</nav>
+		<h1>Cashbook Stats Data</h1>
+	<div>
+		<div>	<!-- 0) 호출 -->
+			<span>0) 연도별 월 지출액</span>
+			<button id="totalOfMonthByYearTable" type="button">Table</button>
+			<button id="totalOfMonthByYearChart" type="button">Chart</button>
+			<button id="totalOfMonthByYearExcel" type="button">Excel</button>
+		</div>
+		<div>	<!-- 0) 출력 -->
+			<span id="totalOfMonthByYearResult" class="hint">데이터결과물의 테이블 or 차트 or 엑셀파일다운로드</span>
+		</div>
+	</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	$('#totalOfMonthByYearTable').click(function(){
+		//$('#totalOfMonthByYearResult').html('totalOfMonthByYearResult');
+		$.ajax({
+			url:'/totalOfMonthByYear',
+			type:'get',
+			success: function(data) {
+			console.log(data);
+			let html = `
+				<table border="1">
+					<tr>
+						<th>january</th>
+						<th>february</th>
+						<th>march</th>
+						<th>april</th>
+						<th>may</th>
+						<th>june</th>
+						<th>july</th>
+						<th>august</th>
+						<th>september</th>
+						<th>octorber</th>
+						<th>november</th>
+						<th>december</th>
+					</tr>
+					<tr>
+						<td>${data.january}</td>
+						<td>${data.february}</td>
+						<td>${data.march}</td>
+						<td>${data.april}</td>
+						<td>${data.may}</td>
+						<td>${data.june}</td>
+						<td>${data.july}</td>
+						<td>${data.august}</td>
+						<td>${data.september}</td>
+						<td>${data.octorber}</td>
+						<td>${data.november}</td>
+						<td>${data.december}</td>
+					</tr>
+				</table>
+			`;
+			$('#totalOfMonthByYearResult').html(html);
+			}
+		});
+	});
+</script>
+</html>
