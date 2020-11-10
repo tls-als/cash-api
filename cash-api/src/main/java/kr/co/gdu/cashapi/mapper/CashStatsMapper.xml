@@ -3,6 +3,14 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.gdu.cashapi.mapper.CashStatsMapper">	
+	<select id="selectTotalOutAndInByYear" parameterType="int" resultType="java.util.Map">
+		SELECT YEAR(cashbook_date) '년',
+		sum(case when cashbook_kind='수입' then cashbook_price END) '수입',
+		sum(case when cashbook_kind='지출' then cashbook_price END) '지출'
+		FROM cashbook
+		WHERE YEAR(cashbook_date) = #{year}
+		GROUP BY Year(cashbook_date)
+	</select>
 	<select id="selectTotalOfMonthByYear" resultType="java.util.Map">
 		SELECT 
 			YEAR(cashbook_date) AS year,
@@ -15,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			sum(case when month(cashbook_date)=7 then cashbook_price END) july,
 			sum(case when month(cashbook_date)=8 then cashbook_price END) august,
 			sum(case when month(cashbook_date)=9 then cashbook_price END) september,
-			sum(case when month(cashbook_date)=10 then cashbook_price END) octorber,
+			sum(case when month(cashbook_date)=10 then cashbook_price END) october,
 			sum(case when month(cashbook_date)=11 then cashbook_price END) november,
 			sum(case when month(cashbook_date)=12 then cashbook_price END) december
 		FROM cashbook

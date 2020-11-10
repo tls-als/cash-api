@@ -9,6 +9,7 @@
 </style>
 </head>
 <body>
+	<!-- 상단 네이게이션 -->
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 		<a class="navbar-brand">CashBook</a>
 		<ul class="nav nav-tabs">
@@ -26,21 +27,119 @@
 		  </li>
 		</ul>
 	</nav>
-		<h1>Cashbook Stats Data</h1>
+	<div><h1>Cashbook Stats Data</h1></div>
+	<!-- 샘플요청1 -->
 	<div>
-		<div>	<!-- 0) 호출 -->
-			<span>0) 연도별 월 지출액</span>
+		<div>	<!-- (테이블,차트,엑셀)호출하는 3개의 버튼 -->
+			<span>1) 연도별 월 지출액</span>
 			<button id="totalOfMonthByYearTable" type="button">Table</button>
 			<button id="totalOfMonthByYearChart" type="button">Chart</button>
 			<button id="totalOfMonthByYearExcel" type="button">Excel</button>
 		</div>
-		<div>	<!-- 0) 출력 -->
-			<span id="totalOfMonthByYearResult" class="hint">데이터결과물의 테이블 or 차트 or 엑셀파일다운로드</span>
+		<div>	<!-- 테이블 출력하는 부분 -->
+			<span id="totalOfMonthByYearResult" class="hint">데이터결과물의 테이블 or  엑셀파일다운로드</span>
+		</div>
+		<div>	<!-- 막대차트 출력하는 부분 -->
+			<canvas id="myChart"></canvas>
 		</div>
 	</div>
+	<!-- 샘플요청2 -->
+	<div>
+		<div>	<!-- 0) (파이차트)호출하는 입력창,버튼 -->
+			<span>2) 연도별 수입/지출</span>
+			<input type="text" id="year">
+			<button id="totalOutAndInByYearChart" type="button">Chart</button>
+		</div>
+		<div>	<!-- 파이차트 출력하는 부분 -->
+			<canvas id="pieChart"></canvas>
+		</div>
+	</div>
+	
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>	<!-- jQuery 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> <!-- Chart.js CDN 주소 -->
 <script>
+	// 연도별 수입,지출 데이터를 출력하는 부분
+	$('#totalOutAndInByYearChart').click(function() {	// 버튼 클릭시 펑션 호출
+		//alert($('#year').val() + ' pieChart');
+		$.ajax({	// 데이터 가져오기
+			url:'/totalOutAndInByYear/'+$('#year').val(),	// 퍼머링크로 데이터를 받기에 입력값을 url로 보내기
+			type:'get',
+			success:function(data) {	// 쿼리 결과 데이터
+				console.log(data);
+				let pieCtx = $('#pieChart');	// 차트를 출력하는 부분
+				let pieChart = new Chart(pieCtx, {	// 차트 객체 생성(출력할곳, 출력하는 형태)
+					type:'pie',	// 차트타입
+					data:{		// 데이터
+						labels:['수입','지출'],	// 항목들
+						datasets:[{
+							backgroundColor:['rgba(54, 162, 235, 0.2)','rgba(255, 99, 132, 0.2)'],
+							borderColor: ['rgba(54, 162, 235, 1)','rgba(255, 99, 132, 1)'],
+							data:[data.수입, data.지출]		// 출력할 데이터
+						}]
+					},
+					options:{}	// 옵션
+				});
+			}
+		});
+	});
+
+	// 데이터수집, 데이터전처리(dataSet)
+	// 월별 합계를 막대그래프로 출력하는 부분
+	$('#totalOfMonthByYearChart').click(function(){
+		$.ajax({
+			url:'/totalOfMonthByYear',
+			type:'get',
+			success: function(data) {
+				// 차트 구현 코드
+				var ctx = document.getElementById('myChart');	// 자바스크립트 표기법.(차트 출력부분)
+				var chart = new Chart(ctx, {	// 차트를 만들곳,어떤 차트를 만들건지
+					type:'bar',	// 차트의 종류
+					data:{		// 차트 안에 사용되는 모든 데이터
+						labels:['1','2','3','4','5','6','7','8','9','10','11','12'],
+						datasets:[{
+							label:'2019년 월별 지출',	// 제목
+							backgroundColor:[
+				                'rgba(255, 99, 132, 0.2)',
+				                'rgba(54, 162, 235, 0.2)',
+				                'rgba(255, 206, 86, 0.2)',
+				                'rgba(75, 192, 192, 0.2)',
+				                'rgba(153, 102, 255, 0.2)',
+				                'rgba(255, 159, 64, 0.2)',
+				                'rgba(255, 99, 132, 0.2)',
+				                'rgba(54, 162, 235, 0.2)',
+				                'rgba(255, 206, 86, 0.2)',
+				                'rgba(75, 192, 192, 0.2)',
+				                'rgba(153, 102, 255, 0.2)',
+				                'rgba(255, 159, 64, 0.2)'
+				            ],
+							borderColor:[
+				                'rgba(255, 99, 132, 1)',
+				                'rgba(54, 162, 235, 1)',
+				                'rgba(255, 206, 86, 1)',
+				                'rgba(75, 192, 192, 1)',
+				                'rgba(153, 102, 255, 1)',
+				                'rgba(255, 159, 64, 1)',
+				                'rgba(255, 99, 132, 1)',
+				                'rgba(54, 162, 235, 1)',
+				                'rgba(255, 206, 86, 1)',
+				                'rgba(75, 192, 192, 1)',
+				                'rgba(153, 102, 255, 1)',
+				                'rgba(255, 159, 64, 1)'
+				            ],
+							// data속성 배열값은 ajax호출 후 결과값으로 채워야 한다
+							data:[data.january, data.february, data.march, data.april,
+								  data.may, data.june, data.july, data.august,
+								  data.september, data.october, data.november, data.december],
+							borderWidth: 1
+						}]
+					},	
+					options:{}
+				});					
+			}
+		});	
+	});
+
 	$('#totalOfMonthByYearTable').click(function(){
 		//$('#totalOfMonthByYearResult').html('totalOfMonthByYearResult');
 		$.ajax({
@@ -60,7 +159,7 @@
 						<th>july</th>
 						<th>august</th>
 						<th>september</th>
-						<th>octorber</th>
+						<th>october</th>
 						<th>november</th>
 						<th>december</th>
 					</tr>
@@ -74,7 +173,7 @@
 						<td>${data.july}</td>
 						<td>${data.august}</td>
 						<td>${data.september}</td>
-						<td>${data.octorber}</td>
+						<td>${data.october}</td>
 						<td>${data.november}</td>
 						<td>${data.december}</td>
 					</tr>
